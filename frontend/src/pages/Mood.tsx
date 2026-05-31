@@ -5,77 +5,61 @@ import Button from '@/components/common/Button';
 import Card from '@/components/common/Card';
 import Modal from '@/components/common/Modal';
 import MoodCard from '@/components/features/MoodCard';
-import { MoodEntry } from '@/types';
+import { MoodEntry, MoodLevel } from '@/types';
+import { localData } from '@/utils/localData';
+
+const moodOptions = [
+  { value: MoodLevel.VERY_BAD, label: 'Very Bad', color: 'bg-red-500/20' },
+  { value: MoodLevel.BAD, label: 'Bad', color: 'bg-orange-500/20' },
+  { value: MoodLevel.NEUTRAL, label: 'Neutral', color: 'bg-gray-500/20' },
+  { value: MoodLevel.GOOD, label: 'Good', color: 'bg-cyan-500/20' },
+  { value: MoodLevel.EXCELLENT, label: 'Excellent', color: 'bg-green-500/20' },
+];
 
 const MoodPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [moods, setMoods] = useState<MoodEntry[]>([
-    {
-      id: 1,
-      mood_level: 'good',
-      mood_score: 7,
-      notes: 'Had a great workout today',
-      activities: ['Exercise', 'Work'],
-      created_at: new Date(Date.now() - 86400000).toISOString(),
-      is_private: false,
-    },
-    {
-      id: 2,
-      mood_level: 'excellent',
-      mood_score: 9,
-      notes: 'Completed a major project!',
-      activities: ['Achievement', 'Social'],
-      created_at: new Date().toISOString(),
-      is_private: false,
-    },
-  ]);
-
+  const [moods, setMoods] = useState<MoodEntry[]>(() => localData.getMoods());
   const [formData, setFormData] = useState({
-    mood_level: 'neutral',
+    mood_level: MoodLevel.NEUTRAL,
     mood_score: 5,
     notes: '',
   });
 
+  const saveMoods = (nextMoods: MoodEntry[]) => {
+    setMoods(nextMoods);
+    localData.saveMoods(nextMoods);
+  };
+
   const handleLogMood = () => {
     const newMood: MoodEntry = {
       id: Math.max(...moods.map((m) => Number(m.id)), 0) + 1,
-      ...formData,
+      mood_level: formData.mood_level,
+      mood_score: formData.mood_score,
+      notes: formData.notes.trim() || null,
       activities: [],
+      tags: [],
       created_at: new Date().toISOString(),
       is_private: false,
     };
-    setMoods([newMood, ...moods]);
-    setFormData({ mood_level: 'neutral', mood_score: 5, notes: '' });
+
+    saveMoods([newMood, ...moods]);
+    setFormData({ mood_level: MoodLevel.NEUTRAL, mood_score: 5, notes: '' });
     setIsModalOpen(false);
   };
-
-  const moodOptions = [
-    { value: 'very_bad', label: '😢 Very Bad', color: 'bg-red-500/20' },
-    { value: 'bad', label: '😟 Bad', color: 'bg-orange-500/20' },
-    { value: 'neutral', label: '😐 Neutral', color: 'bg-gray-500/20' },
-    { value: 'good', label: '🙂 Good', color: 'bg-cyan-500/20' },
-    { value: 'excellent', label: '😄 Excellent', color: 'bg-green-500/20' },
-  ];
 
   return (
     <Layout>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-white">Mood Tracking</h1>
             <p className="text-gray-400 mt-2">Monitor your emotional well-being</p>
           </div>
-          <Button
-            variant="primary"
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2"
-          >
-            ➕ Log Mood
+          <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+            Log Mood
           </Button>
         </div>
 
-        {/* Mood History */}
         <div className="space-y-4">
           {moods.map((mood, idx) => (
             <motion.div
@@ -84,7 +68,10 @@ const MoodPage: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.1 }}
             >
-              <MoodCard mood={mood} onDelete={(id) => setMoods(moods.filter((m) => m.id !== id))} />
+              <MoodCard
+                mood={mood}
+                onDelete={(id) => saveMoods(moods.filter((entry) => entry.id !== id))}
+              />
             </motion.div>
           ))}
         </div>
@@ -92,7 +79,6 @@ const MoodPage: React.FC = () => {
         {moods.length === 0 && (
           <Card>
             <div className="text-center py-12">
-              <div className="text-4xl mb-4">😊</div>
               <h3 className="text-lg font-semibold text-white mb-2">No mood entries yet</h3>
               <p className="text-gray-400 mb-4">Start tracking your mood for insights</p>
               <Button onClick={() => setIsModalOpen(true)}>Log Your Mood</Button>
@@ -101,7 +87,6 @@ const MoodPage: React.FC = () => {
         )}
       </motion.div>
 
-      {/* Log Mood Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -118,13 +103,13 @@ const MoodPage: React.FC = () => {
                 <button
                   key={option.value}
                   onClick={() => setFormData({ ...formData, mood_level: option.value })}
-                  className={`p-3 rounded-lg transition-all ${
+                  className={`p-3 rounded-lg text-xs transition-all ${
                     formData.mood_level === option.value
-                      ? 'ring-2 ring-cyan-500 ' + option.color
+                      ? `ring-2 ring-cyan-500 ${option.color}`
                       : 'bg-gray-800 hover:bg-gray-700'
                   }`}
                 >
-                  {option.label.split(' ')[0]}
+                  {option.label}
                 </button>
               ))}
             </div>
@@ -140,16 +125,14 @@ const MoodPage: React.FC = () => {
               max="10"
               value={formData.mood_score}
               onChange={(e) =>
-                setFormData({ ...formData, mood_score: parseInt(e.target.value) })
+                setFormData({ ...formData, mood_score: parseInt(e.target.value, 10) })
               }
               className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
-              Notes (optional)
-            </label>
+            <label className="block text-sm font-medium text-gray-200 mb-2">Notes</label>
             <textarea
               className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
               rows={4}
@@ -160,11 +143,7 @@ const MoodPage: React.FC = () => {
           </div>
 
           <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              onClick={() => setIsModalOpen(false)}
-              className="flex-1"
-            >
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="flex-1">
               Cancel
             </Button>
             <Button variant="primary" onClick={handleLogMood} className="flex-1">

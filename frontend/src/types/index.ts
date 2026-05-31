@@ -62,6 +62,7 @@ export interface Habit {
   updated_at?: string;
   current_streak?: number;
   longest_streak?: number;
+  completions?: string[];
 }
 
 export interface HabitStats {
