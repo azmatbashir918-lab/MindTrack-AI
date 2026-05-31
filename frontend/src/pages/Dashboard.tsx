@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/common/Layout';
 import StatsCard from '@/components/common/StatsCard';

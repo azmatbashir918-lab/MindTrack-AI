@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { MoodEntry } from '@/types';
 import Card from '../common/Card';
 import Button from '../common/Button';
@@ -7,7 +6,7 @@ import Button from '../common/Button';
 interface MoodCardProps {
   mood: MoodEntry;
   onEdit?: (mood: MoodEntry) => void;
-  onDelete?: (moodId: number) => void;
+  onDelete?: (moodId: MoodEntry['id']) => void;
 }
 
 const moodConfig = {

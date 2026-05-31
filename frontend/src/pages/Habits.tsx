@@ -48,7 +48,7 @@ const HabitsPage: React.FC = () => {
   const handleAddHabit = () => {
     if (formData.name.trim()) {
       const newHabit: Habit = {
-        id: Math.max(...habits.map((h) => h.id), 0) + 1,
+        id: Math.max(...habits.map((h) => Number(h.id)), 0) + 1,
         ...formData,
         current_streak: 0,
         longest_streak: 0,
@@ -67,7 +67,7 @@ const HabitsPage: React.FC = () => {
     }
   };
 
-  const handleDeleteHabit = (id: number) => {
+  const handleDeleteHabit = (id: Habit['id']) => {
     setHabits(habits.filter((h) => h.id !== id));
   };
 

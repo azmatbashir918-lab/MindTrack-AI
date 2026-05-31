@@ -44,7 +44,7 @@ export const storage = {
 
 /* Date formatting utilities */
 export const dateUtils = {
-  format(date: Date | string, format: string = 'MMM dd, yyyy'): string {
+  format(date: Date | string, _format: string = 'MMM dd, yyyy'): string {
     const d = typeof date === 'string' ? new Date(date) : date;
     return d.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -53,7 +53,7 @@ export const dateUtils = {
     });
   },
   
-  formatTime(date: Date | string, format: string = 'HH:mm'): string {
+  formatTime(date: Date | string, _format: string = 'HH:mm'): string {
     const d = typeof date === 'string' ? new Date(date) : date;
     return d.toLocaleTimeString('en-US', {
       hour: '2-digit',

@@ -6,9 +6,9 @@ import Button from '../common/Button';
 
 interface HabitCardProps {
   habit: Habit;
-  onComplete?: (habitId: number) => void;
+  onComplete?: (habitId: Habit['id']) => void;
   onEdit?: (habit: Habit) => void;
-  onDelete?: (habitId: number) => void;
+  onDelete?: (habitId: Habit['id']) => void;
   isCompleted?: boolean;
 }
 
@@ -27,7 +27,9 @@ const HabitCard: React.FC<HabitCardProps> = ({
     personal: 'bg-pink-500/20 text-pink-400',
   };
 
-  const streakColor = habit.current_streak > 7 ? 'text-green-400' : 'text-orange-400';
+  const currentStreak = habit.current_streak ?? 0;
+  const longestStreak = habit.longest_streak ?? 0;
+  const streakColor = currentStreak > 7 ? 'text-green-400' : 'text-orange-400';
 
   return (
     <Card interactive gradient>
@@ -49,11 +51,11 @@ const HabitCard: React.FC<HabitCardProps> = ({
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-gray-900/50 rounded-lg p-3 text-center">
             <p className="text-xs text-gray-400">Current</p>
-            <p className={`text-2xl font-bold ${streakColor}`}>{habit.current_streak}</p>
+            <p className={`text-2xl font-bold ${streakColor}`}>{currentStreak}</p>
           </div>
           <div className="bg-gray-900/50 rounded-lg p-3 text-center">
             <p className="text-xs text-gray-400">Longest</p>
-            <p className="text-2xl font-bold text-cyan-400">{habit.longest_streak}</p>
+            <p className="text-2xl font-bold text-cyan-400">{longestStreak}</p>
           </div>
           <div className="bg-gray-900/50 rounded-lg p-3 text-center">
             <p className="text-xs text-gray-400">Frequency</p>

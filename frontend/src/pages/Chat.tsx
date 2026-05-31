@@ -24,7 +24,7 @@ const ChatPage: React.FC = () => {
     if (!input.trim()) return;
 
     const userMessage: ChatMessageType = {
-      id: Math.max(...messages.map((m) => m.id), 0) + 1,
+      id: Math.max(...messages.map((m) => Number(m.id)), 0) + 1,
       role: 'user',
       content: input,
       created_at: new Date().toISOString(),
@@ -36,7 +36,7 @@ const ChatPage: React.FC = () => {
 
     setTimeout(() => {
       const aiMessage: ChatMessageType = {
-        id: Math.max(...messages.map((m) => m.id), 0) + 2,
+        id: Math.max(...messages.map((m) => Number(m.id)), 0) + 2,
         role: 'assistant',
         content: `That's great! Keep up the good work with your habits. Remember, consistency is more important than perfection. Would you like me to analyze your recent patterns or suggest some improvements?`,
         created_at: new Date().toISOString(),

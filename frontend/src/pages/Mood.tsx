@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/common/Layout';
 import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
 import Card from '@/components/common/Card';
 import Modal from '@/components/common/Modal';
 import MoodCard from '@/components/features/MoodCard';
@@ -39,7 +38,7 @@ const MoodPage: React.FC = () => {
 
   const handleLogMood = () => {
     const newMood: MoodEntry = {
-      id: Math.max(...moods.map((m) => m.id), 0) + 1,
+      id: Math.max(...moods.map((m) => Number(m.id)), 0) + 1,
       ...formData,
       activities: [],
       created_at: new Date().toISOString(),

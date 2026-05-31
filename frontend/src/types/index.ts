@@ -44,22 +44,24 @@ export enum HabitFrequency {
 }
 
 export interface Habit {
-  id: string;
-  user_id: string;
+  id: string | number;
+  user_id?: string;
   name: string;
   description: string | null;
-  category: HabitCategory;
-  frequency: HabitFrequency;
-  target_days: number;
-  color: string;
-  icon: string | null;
+  category: HabitCategory | string;
+  frequency: HabitFrequency | string;
+  target_days?: number;
+  color?: string;
+  icon?: string | null;
   reminder_time: string | null;
-  reminder_enabled: boolean;
+  reminder_enabled?: boolean;
   is_active: boolean;
-  start_date: string;
-  end_date: string | null;
+  start_date?: string;
+  end_date?: string | null;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
+  current_streak?: number;
+  longest_streak?: number;
 }
 
 export interface HabitStats {
@@ -72,6 +74,14 @@ export interface HabitStats {
   last_completed: string | null;
 }
 
+export interface HabitCompletion {
+  id: string | number;
+  habit_id: string | number;
+  user_id?: string;
+  completed_at: string;
+  notes?: string | null;
+}
+
 /* Mood Types */
 export enum MoodLevel {
   VERY_BAD = 'very_bad',
@@ -82,15 +92,17 @@ export enum MoodLevel {
 }
 
 export interface MoodEntry {
-  id: string;
-  user_id: string;
-  mood_level: MoodLevel;
+  id: string | number;
+  user_id?: string;
+  mood_level: MoodLevel | string;
   mood_score: number;
   notes: string | null;
-  energy_level: number | null;
-  stress_level: number | null;
-  tags: string[] | null;
+  energy_level?: number | null;
+  stress_level?: number | null;
+  tags?: string[] | null;
+  activities?: string[];
   created_at: string;
+  is_private?: boolean;
 }
 
 export interface MoodStats {
@@ -102,15 +114,22 @@ export interface MoodStats {
 
 /* AI Types */
 export interface ChatMessage {
-  id: string;
+  id: string | number;
   role: 'user' | 'assistant';
   content: string;
-  tokens_used: number | null;
+  tokens_used?: number | null;
   created_at: string;
 }
 
 export interface ChatRequest {
   message: string;
+}
+
+export interface AIReport {
+  summary: string;
+  insights: string[];
+  recommendations: string[];
+  generated_at: string;
 }
 
 /* API Response Types */
