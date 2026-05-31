@@ -17,7 +17,7 @@ function App() {
   const isAuthenticated = true;
 
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <Routes>
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
